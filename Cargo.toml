@@ -1,0 +1,14 @@
+[package]
+name = "os-tico"
+version = "0.1.0"
+authors = ["joxer <diego.luca.candido@gmail.com>"]
+edition = "2018"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+bootloader = "0.6.0"
