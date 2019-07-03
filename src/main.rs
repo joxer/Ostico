@@ -10,8 +10,12 @@ use ostico::println;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
+    println!("Hello darkness my old friend");
 
+    ostico::init(); // new
+
+    // invoke a breakpoint exception
+    x86_64::instructions::interrupts::int3(); // new
     #[cfg(test)]
     test_main();
 
