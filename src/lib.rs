@@ -52,6 +52,7 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 #[cfg(test)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    init();
     test_main();
     loop {}
 }
@@ -60,4 +61,16 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     test_panic_handler(info)
+}
+
+
+#[cfg(test)]
+use crate::{serial_print, serial_println};
+
+#[test_case]
+fn test_breakpoint_exception() {
+    serial_print!("test_breakpoint_exception...");
+    // invoke a breakpoint exception
+    x86_64::instructions::interrupts::int3();
+    serial_println!("[ok]");
 }
