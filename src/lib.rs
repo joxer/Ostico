@@ -1,21 +1,19 @@
 #![no_std]
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
+#![feature(abi_x86_interrupt)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
-#![feature(abi_x86_interrupt)]
 
 use core::panic::PanicInfo;
 
+pub mod interrupts;
 pub mod serial;
 pub mod vga_buffer;
-pub mod interrupts;
 
 pub fn init() {
     interrupts::init_idt();
 }
-
-// TESTS
 
 pub fn test_runner(tests: &[&dyn Fn()]) {
     serial_println!("Running {} tests", tests.len());
@@ -61,16 +59,4 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     test_panic_handler(info)
-}
-
-
-#[cfg(test)]
-use crate::{serial_print, serial_println};
-
-#[test_case]
-fn test_breakpoint_exception() {
-    serial_print!("test_breakpoint_exception...");
-    // invoke a breakpoint exception
-    x86_64::instructions::interrupts::int3();
-    serial_println!("[ok]");
 }
