@@ -1,4 +1,5 @@
 
+#![feature(asm)]
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
@@ -7,15 +8,22 @@
 
 use core::panic::PanicInfo;
 use ostico::println;
-
+use ostico::interrupts;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
-
+    interrupts::init();
+    divide_by_zero();
+    loop {}
     #[cfg(test)]
     test_main();
 
-    loop {}
+}
+
+fn divide_by_zero() {
+    unsafe {
+        asm!("mov dx, 0; div dx" ::: "ax", "dx" : "volatile", "intel")
+    }
 }
 
 /// This function is called on panic.
